@@ -68,6 +68,20 @@ Any other MCP client uses the same pattern: run `greenerplatform-mcp` over stdio
 If `triage_incident` is called without `sentinel_json`, it collects a fresh snapshot
 first (requires cluster access).
 
+## Version guard
+
+A stale CLI silently emits fewer checks — for example, `kubectl-sentinel` 1.1.0
+returns 10 of the 15 health dimensions. To keep an agent from reasoning over an
+incomplete snapshot, the server checks each CLI's `--version` and, if it is below the
+expected minimum, adds a non-destructive `warnings` array to the tool's JSON output:
+
+```json
+{ "warnings": ["kubectl-sentinel 1.1.0 is older than the expected 1.2.1; output may be missing checks — update kubectl-sentinel"] }
+```
+
+The findings are still returned; the warning just flags that they may be partial. Set
+`MIN_SENTINEL_VERSION` / `MIN_TRIAGE_VERSION` to change the expected minimums.
+
 ## Environment
 
 | Variable | Default | Purpose |
@@ -75,6 +89,8 @@ first (requires cluster access).
 | `SENTINEL_BIN` | `kubectl-sentinel` on PATH | path to the sentinel binary |
 | `TRIAGE_BIN` | `incident-triage` on PATH | path to the triage binary |
 | `GP_MCP_TIMEOUT` | `90` | per-command timeout (seconds) |
+| `MIN_SENTINEL_VERSION` | `1.2.1` | warn if the installed sentinel is older |
+| `MIN_TRIAGE_VERSION` | `1.2.1` | warn if the installed triage is older |
 
 ## License
 
