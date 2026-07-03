@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="docs/banner.svg" alt="greenerplatform-mcp" width="100%"/>
+</div>
+
 # greenerplatform-mcp
 
 An [MCP](https://modelcontextprotocol.io) server that exposes the GreenerPlatform
