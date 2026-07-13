@@ -92,6 +92,28 @@ The findings are still returned; the warning just flags that they may be partial
 | `MIN_SENTINEL_VERSION` | `1.2.1` | warn if the installed sentinel is older |
 | `MIN_TRIAGE_VERSION` | `1.2.1` | warn if the installed triage is older |
 
+## Releasing
+
+Releases publish to PyPI automatically via GitHub Actions using **Trusted Publishing**
+(OIDC) — no API tokens are stored anywhere.
+
+One-time setup (on [pypi.org](https://pypi.org)):
+
+1. Sign in → *Your projects* → *Publishing* → *Add a pending publisher*.
+2. Project name `greenerplatform-mcp`, owner `GreenerPlatform`, repo `greenerplatform-mcp`,
+   workflow `publish.yml`, environment `pypi`.
+
+To cut a release:
+
+```bash
+# bump version in pyproject.toml, commit, then:
+git tag v0.1.0 && git push origin v0.1.0
+gh release create v0.1.0 --generate-notes
+```
+
+The `Publish to PyPI` workflow builds, runs `twine check`, and publishes. After the first
+release, `pipx install greenerplatform-mcp` works for anyone.
+
 ## License
 
 Apache-2.0. See `LICENSE`, `NOTICE`, and the project
