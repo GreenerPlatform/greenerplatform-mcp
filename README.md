@@ -1,5 +1,10 @@
 <div align="center">
-  <img src="docs/banner.svg" alt="greenerplatform-mcp" width="100%"/>
+  <img src="https://raw.githubusercontent.com/GreenerPlatform/greenerplatform-mcp/main/docs/banner.svg" alt="greenerplatform-mcp" width="100%"/>
+
+[![PyPI](https://img.shields.io/pypi/v/greenerplatform-mcp?color=1a9c3e)](https://pypi.org/project/greenerplatform-mcp/)
+[![Python](https://img.shields.io/pypi/pyversions/greenerplatform-mcp)](https://pypi.org/project/greenerplatform-mcp/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue)](LICENSE)
+
 </div>
 
 # greenerplatform-mcp
@@ -7,6 +12,8 @@
 An [MCP](https://modelcontextprotocol.io) server that exposes the GreenerPlatform
 deterministic reliability tools to any MCP-capable agent — **Cursor, Claude Desktop,
 VS Code, Windsurf, or your own client.** Install once; the tools work everywhere.
+
+> **Available on PyPI:** `pipx install greenerplatform-mcp`
 
 It wraps two CLIs:
 

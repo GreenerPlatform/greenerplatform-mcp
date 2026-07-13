@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "greenerplatform-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server exposing the GreenerPlatform deterministic reliability tools (kubectl-sentinel, incident-triage) to any AI agent."
 readme = "README.md"
 requires-python = ">=3.10"
