@@ -3,10 +3,8 @@
 # Copyright 2026 Olawale Ogundiran
 """GreenerPlatform MCP server.
 
-Exposes the deterministic reliability tools — kubectl-sentinel and
-incident-triage — to any MCP-capable agent (Cursor, Claude Desktop, VS Code,
-Windsurf, or a custom client). The agent reasons over the evidence these tools
-produce; it does not guess at cluster state.
+Exposes kubectl-sentinel and incident-triage to compatible MCP hosts. The server
+is an adapter, not a reasoning or policy-enforcement layer.
 
 The tools themselves carry no LLM and no vendor coupling. This server is a thin,
 neutral adapter over their CLIs.
@@ -32,8 +30,8 @@ DEFAULT_TIMEOUT = int(os.environ.get("GP_MCP_TIMEOUT", "90"))
 # Minimum CLI versions this server is validated against. A stale binary silently
 # emits fewer checks (e.g. sentinel 1.1.0 returns 10 of 15 dimensions), so we
 # surface a warning rather than let the agent reason over an incomplete snapshot.
-MIN_SENTINEL_VERSION = os.environ.get("MIN_SENTINEL_VERSION", "1.2.1")
-MIN_TRIAGE_VERSION = os.environ.get("MIN_TRIAGE_VERSION", "1.2.1")
+MIN_SENTINEL_VERSION = os.environ.get("MIN_SENTINEL_VERSION", "1.3.2")
+MIN_TRIAGE_VERSION = os.environ.get("MIN_TRIAGE_VERSION", "1.3.2")
 
 _VERSION_RE = re.compile(r"(\d+)\.(\d+)\.(\d+)")
 
@@ -63,7 +61,7 @@ def _version_warning(name: str, bin_path: str, minimum: str) -> str | None:
     if installed < want:
         got = ".".join(map(str, installed))
         return (f"{name} {got} is older than the expected {minimum}; output may be "
-                f"missing checks — update {name} (e.g. 'kubectl krew upgrade sentinel').")
+                f"missing checks — install the current source version.")
     return None
 
 
@@ -99,17 +97,23 @@ def _collect_sentinel(namespace: str, context: str, resource: str) -> subprocess
 
 @mcp.tool()
 def sentinel_snapshot(namespace: str = "", context: str = "", resource: str = "") -> str:
-    """Collect a deterministic Kubernetes cluster-health snapshot as JSON.
+    """Collect a rule-based Kubernetes health report as JSON.
 
     Runs kubectl-sentinel across 15 health dimensions (pods, workloads, events,
     jobs, PDBs, quotas, DNS, certs, and more) and returns structured, severity-
-    ranked findings. Same cluster state in, same findings out.
+    ranked observations with collection status.
 
     Args:
-        namespace: scope to a single namespace (optional; default all namespaces).
+        namespace: scope namespaced collectors (optional; default all namespaces).
         context: kubeconfig context to target (optional).
-        resource: a specific resource to focus on, e.g. "pod/api-gateway" (optional).
+        resource: reserved; resource deep-dives do not currently support JSON output.
     """
+    if resource:
+        return json.dumps({
+            "error": "resource-specific snapshots are not supported",
+            "code": "unsupported_resource",
+            "hint": "Run kubectl-sentinel deep-dive mode directly; it currently emits text only.",
+        })
     p = _collect_sentinel(namespace, context, resource)
     warn = _version_warning("kubectl-sentinel", SENTINEL_BIN, MIN_SENTINEL_VERSION)
     if not p.stdout.strip():
@@ -125,11 +129,11 @@ def sentinel_snapshot(namespace: str = "", context: str = "", resource: str = ""
 
 @mcp.tool()
 def triage_incident(alert: str, sentinel_json: str = "", namespace: str = "", context: str = "") -> str:
-    """Triage an incident deterministically and return a prioritised fix plan as JSON.
+    """Correlate an alert with a sentinel report and return ranked evidence as JSON.
 
-    Correlates an alert to cluster findings, builds a causation chain (root cause ->
-    contributing -> symptom), infers the likely change that triggered it, and emits
-    a P1/P2/P3 fix plan with concrete kubectl commands. No LLM, no guessing.
+    The upstream schema retains causation-chain and fix-plan field names for
+    compatibility. Their values are hypotheses and candidate steps for operator
+    review, not verified causation or automatically safe remediation.
 
     Args:
         alert: the alert as free text (e.g. "payments API 503 since 14:30") or a

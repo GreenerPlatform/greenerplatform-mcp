@@ -4,20 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "greenerplatform-mcp"
-version = "0.1.1"
-description = "MCP server exposing the GreenerPlatform deterministic reliability tools (kubectl-sentinel, incident-triage) to any AI agent."
+version = "0.1.2"
+description = "MCP adapter for GreenerPlatform Kubernetes evidence collection and rule-based incident correlation."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
 authors = [{ name = "Olawale Ogundiran" }]
 keywords = ["mcp", "kubernetes", "sre", "reliability", "incident", "triage", "agent"]
-dependencies = ["mcp>=1.2.0"]
+dependencies = ["mcp>=1.2.0,<2"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
-    "Operating System :: OS Independent",
+    "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
