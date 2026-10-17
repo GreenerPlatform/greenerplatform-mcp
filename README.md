@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/GreenerPlatform/greenerplatform-mcp/main/docs/banner.svg?v=2" alt="greenerplatform-mcp" width="100%"/>
+  <img src="https://raw.githubusercontent.com/GreenerPlatform/greenerplatform-mcp/main/docs/banner-v2.png" alt="greenerplatform-mcp" width="100%"/>
 
 [![PyPI](https://img.shields.io/pypi/v/greenerplatform-mcp?color=1a9c3e)](https://pypi.org/project/greenerplatform-mcp/)
 [![Python](https://img.shields.io/pypi/pyversions/greenerplatform-mcp)](https://pypi.org/project/greenerplatform-mcp/)
